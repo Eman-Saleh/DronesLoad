@@ -46,17 +46,17 @@ namespace DronesLoad.Controllers
 					return BadRequest("Fake Load");
 
 
-			var drone = _unitOfWork.Drones.GetByID(medicationModels[0].DroneId.Value);
-			//var states = _unitOfWork.DroneStates.GetAll();
-			if (drone == null)
+				var drone = _unitOfWork.Drones.FindAll(a=> a.Id == medicationModels[0].DroneId,  new[] { "Medications" }).ToList().FirstOrDefault();
+				//var states = _unitOfWork.DroneStates.GetAll();
+				if (drone == null)
 			{
 				return BadRequest("Drone not exist");
 			}
 
 			//check drone state as it  allowed to load if in Idle or Loading State
-			if (drone.State.Id != 1 && drone.State.Id != 2 )  
+			if (drone.StateId != 1 && drone.StateId != 2 )  
 			{
-				return BadRequest($"Drone Can't be loaded. Drone is  {drone.State.StateName} ");
+				return BadRequest($"Drone State not allowed to load  ");
 			}
 
 			//check drone battery if less than 25%
@@ -79,16 +79,17 @@ namespace DronesLoad.Controllers
 			var WeightLeft = drone.WeightLimit - (double)(medicationsWeight + DroneCapacity);
 
 			//this sets the state of the drone to loaded once it reaches its capacity or loading if there's still space left
-			if ((drone.State.Id == 1|| drone.State.Id ==2) && WeightLeft > 0)
-				drone.State.Id = 2;
-			else if ((drone.State.Id == 1 || drone.State.Id == 2) && WeightLeft == 0)
-				drone.State.Id = 3;
+			if ((drone.StateId == 1|| drone.StateId ==2) && WeightLeft > 0)
+				drone.StateId = 2;
+			else if ((drone.StateId == 1 || drone.StateId == 2) && WeightLeft == 0)
+				drone.StateId = 3;
 			var medication = new List<Medication>();
 			foreach (var item in medicationModels)
 			{
 				medication.Add(mapMedicationModelToDB(item));
 			}
 			 _unitOfWork.Medications.AddRange(medication);
+				drone.StateId = 3; // finish loading(Loaded ) can be move 
 			_unitOfWork.Drones.Update(drone);
 			 _unitOfWork.Complete();
 
@@ -106,7 +107,7 @@ namespace DronesLoad.Controllers
 		public async Task<IActionResult> checkMedicationOfADrone(int droneID)
 		{
 			try {
-			var drones = _unitOfWork.Drones.FindAll(x => x.Id == droneID && x.StateId==3, new[] { "Medication"}).FirstOrDefault();
+			var drones = _unitOfWork.Drones.FindAll(x => x.Id == droneID && x.StateId==3, new[] { "Medications" }).FirstOrDefault();
 			if (drones == null)// || drones.Count == 0)
 			{
 				return StatusCode(500, "No drones found.");
