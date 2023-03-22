@@ -1,5 +1,4 @@
-# Drone App
-has many API
+# Drone App with many POST & GET API
 **RegisterADrone** POST => https://localhost:7299/api/Dispatch/RegisterADrone
 take Drone model in json 
 {
