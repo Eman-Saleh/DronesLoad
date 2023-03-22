@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "Drone": {
+    "DronesLoad": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

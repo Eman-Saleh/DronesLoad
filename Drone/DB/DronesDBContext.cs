@@ -19,14 +19,10 @@ namespace DronesLoad.DB
         public virtual DbSet<Drone> Drones { get; set; } = null!;
         public virtual DbSet<DroneModel> DroneModels { get; set; } = null!;
         public virtual DbSet<DroneState> DroneStates { get; set; } = null!;
+        public virtual DbSet<Medication> Medications { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-              
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -35,11 +31,12 @@ namespace DronesLoad.DB
             {
                 entity.ToTable("Drone");
 
+                entity.HasIndex(e => e.SerialNumber, "UQ__Drone__048A00082C70192C")
+                    .IsUnique();
+
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.BatteryCapacity)
-                    .HasColumnType("decimal(3, 2)")
-                    .HasColumnName("batteryCapacity");
+                entity.Property(e => e.BatteryCapacity).HasColumnName("batteryCapacity");
 
                 entity.Property(e => e.ModelId).HasColumnName("modelID");
 
@@ -66,7 +63,7 @@ namespace DronesLoad.DB
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 
-                entity.Property(e => e.ModelName).HasMaxLength(10);
+                entity.Property(e => e.ModelName).HasMaxLength(20);
             });
 
             modelBuilder.Entity<DroneState>(entity =>
@@ -78,6 +75,30 @@ namespace DronesLoad.DB
                 entity.Property(e => e.StateName)
                     .HasMaxLength(10)
                     .HasColumnName("stateName");
+            });
+
+            modelBuilder.Entity<Medication>(entity =>
+            {
+                entity.ToTable("Medication");
+
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.Code).HasMaxLength(50);
+
+                entity.Property(e => e.DroneId).HasColumnName("DroneID");
+
+                entity.Property(e => e.Image).HasMaxLength(50);
+
+                entity.Property(e => e.Name)
+                    .HasMaxLength(50)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.Weight).HasColumnType("decimal(4, 2)");
+
+                entity.HasOne(d => d.Drone)
+                    .WithMany(p => p.Medications)
+                    .HasForeignKey(d => d.DroneId)
+                    .HasConstraintName("FK_Medication_Drone");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -15,6 +15,7 @@ namespace DronesLoad.Interfaces
         public IBaseRepository<DB.Drone> Drones { get; }
 		public IBaseRepository<DroneModel> DroneModels { get; }
 		public IBaseRepository<DroneState> DroneStates { get; }
+		public IBaseRepository<Medication> Medications { get; }
 		int Complete();
     }
 }

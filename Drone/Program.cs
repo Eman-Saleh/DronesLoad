@@ -4,6 +4,7 @@ using DronesLoad.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,7 +29,14 @@ builder.Services.AddDbContext<DronesDBContext>(options =>
 });// for using ecret file
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+var logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(builder.Configuration)
+        .Enrich.FromLogContext()
+        .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -42,5 +50,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.Logger.LogInformation("Starting the app");
 
 app.Run();
