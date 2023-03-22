@@ -159,13 +159,15 @@ namespace DronesLoad.Controllers
 		{
 			try {
 			var _drone = _unitOfWork.Drones.GetByID(droneId);
-			if (_drone == null)
-			{
-				return StatusCode(500, "Wrong drone ID .");
-			}
-			else
-				{ _logger .LogInformation ("Drone with Serial number "+ _drone.SerialNumber +" has battery level equal  "+_drone.BatteryCapacity)}
-				return Ok(_drone.BatteryCapacity);
+				if (_drone == null)
+				{
+					return StatusCode(500, "Wrong drone ID .");
+				}
+				else
+				{
+					_logger.LogInformation("Drone with Serial number " + _drone.SerialNumber + " has battery level equal  " + _drone.BatteryCapacity);
+					return Ok(_drone.BatteryCapacity);
+				}
 			}
 			catch (Exception ex)
 			{
