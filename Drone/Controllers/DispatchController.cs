@@ -164,6 +164,7 @@ namespace DronesLoad.Controllers
 				return StatusCode(500, "Wrong drone ID .");
 			}
 			else
+				{ _logger .LogInformation ("Drone with Serial number "+ _drone.SerialNumber +" has battery level equal  "+_drone.BatteryCapacity)}
 				return Ok(_drone.BatteryCapacity);
 			}
 			catch (Exception ex)
