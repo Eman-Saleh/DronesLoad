@@ -1,4 +1,10 @@
-# Drone App with many POST & GET API
+# Drone Load Project 
+/****************************************************************************************/
+the DB script file exit in DB Folder it will create DB and tables with default data
+/*******************************************************************************************/
+the project has Serilog to save logs in the folder of project with name log it also has docker windows enviroment 
+/******************************************************************************************/
+the Project has many POST & GET API
 **RegisterADrone** POST => https://localhost:7299/api/Dispatch/RegisterADrone
 take Drone model in json 
 {
@@ -32,7 +38,3 @@ take lit of medication in JSON
 and also Get APIs
 checkMedicationOfADrone,checkAvailableDrone,getDroneBatteryLevel,GetAll Drones
 
-the DB script file exit in DB Folder it will create DB and tables with default data
-/*******************************************************************************************/
-the project has Serilog save logs in the folder of project it also has docker windows enviroment 
-/******************************************************************************************/
