@@ -1,6 +1,8 @@
 # Drone Load Project 
 /****************************************************************************************/
+
 the DB script file exit in DB Folder it will create DB and tables with default data
+
 /*******************************************************************************************/
 the project has Serilog to save logs in the folder of project with name log it also has docker windows enviroment 
 /******************************************************************************************/
