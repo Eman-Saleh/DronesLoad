@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AutoMapper;
+using DronesLoad.DB;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -23,4 +25,12 @@ namespace DronesLoad.Models
         public virtual DModelWeight? DModel { get; set; }
         public virtual DroneStatesModel? State { get; set; }
     }
+	public class DroneProfile : Profile
+	{
+		public DroneProfile()
+		{
+			CreateMap<Drone, DronesModel>().ForMember(dest => dest.SerialNumber , opt => opt.MapFrom(src => src.SerialNumber)).ForMember(dest => dest.Id, opt => opt.Ignore());
+			CreateMap<DronesModel, Drone >().ForMember(dest => dest.SerialNumber, opt => opt.MapFrom(src => src.SerialNumber));
+		}
+	}
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AutoMapper;
+using DronesLoad.DB;
+using System;
 using System.Collections.Generic;
 
 namespace DronesLoad.Models
@@ -14,4 +16,12 @@ namespace DronesLoad.Models
 
         public virtual DronesModel? DroneModel { get; set; }
     }
+	public class MedicationProfile : Profile
+	{
+		public MedicationProfile()
+		{
+			CreateMap<Medication, MedicationModel>().ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name)).ForMember(dest => dest.Id, opt => opt.Ignore());
+			CreateMap<MedicationModel, Medication>().ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
+		}
+	}
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AutoMapper;
+using DronesLoad.DB;
+using System;
 using System.Collections.Generic;
 
 namespace DronesLoad.Models
@@ -15,4 +17,5 @@ namespace DronesLoad.Models
 
         public virtual ICollection<DronesModel> Drones { get; set; }
     }
+
 }

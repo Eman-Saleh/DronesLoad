@@ -1,7 +1,10 @@
+using AutoMapper;
 using DronesLoad.DB;
 using DronesLoad.Interfaces;
 using DronesLoad.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Text;
 
 namespace DronesLoad.Controllers
 {
@@ -13,11 +16,13 @@ namespace DronesLoad.Controllers
 
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly ILogger<DispatchController> _logger;
+		private IMapper _mapper{get;}
 
-        public DispatchController(ILogger<DispatchController> logger, IUnitOfWork  unitOfWork)
+		public DispatchController(ILogger<DispatchController> logger, IUnitOfWork  unitOfWork, IMapper mapper)
         {
             _logger = logger;
 			_unitOfWork=unitOfWork;
+			_mapper=mapper;
         }
 		[HttpPost]
 		public async Task<IActionResult> RegisterADrone([FromBody] DronesModel drone)
@@ -25,7 +30,7 @@ namespace DronesLoad.Controllers
 			try
 			{
 				//drone.DModel = droneModel;
-				_unitOfWork.Drones.Add(mapDroneModelToDB(drone));
+				_unitOfWork.Drones.Add(_mapper.Map<Drone>(drone));
 				_unitOfWork.Complete();
 
 				return StatusCode(200);
@@ -86,12 +91,13 @@ namespace DronesLoad.Controllers
 			var medication = new List<Medication>();
 			foreach (var item in medicationModels)
 			{
-				medication.Add(mapMedicationModelToDB(item));
+				medication.Add(_mapper.Map<Medication>(item));//mapMedicationModelToDB(item));
 			}
-			 _unitOfWork.Medications.AddRange(medication);
-				drone.StateId = 3; // finish loading(Loaded ) can be move 
+
+			_unitOfWork.Medications.AddRange(medication);
+			drone.StateId = 3; // finish loading(Loaded ) can be move 
 			_unitOfWork.Drones.Update(drone);
-			 _unitOfWork.Complete();
+			_unitOfWork.Complete();
 
 			return Ok(medicationModels);
 			}
@@ -112,8 +118,12 @@ namespace DronesLoad.Controllers
 			{
 				return StatusCode(500, "No drones found.");
 			}
-			else
-				return Ok(drones.Medications);
+				else
+				{
+					List<MedicationModel> medicationModels =
+	_mapper.Map<List<Medication>, List<MedicationModel>>(drones.Medications.ToList());
+				return Ok(medicationModels);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -182,27 +192,6 @@ namespace DronesLoad.Controllers
 					"Error Get All Drones");
 			}
 		}
-		private Medication mapMedicationModelToDB(MedicationModel medicationModel)
-		{
-			Medication medication = new Medication();
-			medication.Id = medicationModel.Id;
-			medication.Code = medicationModel.Code;
-			medication.Weight = medicationModel.Weight;
-			medication.Image = medicationModel.Image;
-			medication.Name = medicationModel.Name;
-			medication.DroneId = medicationModel.DroneId;
-			return medication;
-		}
-		private Drone mapDroneModelToDB(DronesModel droneModel)
-		{
-			Drone drone = new Drone();
-			drone.Id = droneModel.Id;
-			drone.ModelId = droneModel.ModelId;
-			drone.StateId = droneModel.StateId;
-			drone.SerialNumber = droneModel.SerialNumber;
-			drone.BatteryCapacity = droneModel.BatteryCapacity;
-			drone.WeightLimit = droneModel.WeightLimit;
-			return drone;
-		}
+	
 	}
 }
